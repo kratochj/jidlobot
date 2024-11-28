@@ -72,7 +72,7 @@ public class SlackBotService {
         return switch (commandText) {
             case "menu" -> null;
             case "help" -> "Dostupné příkazy:\n- @jidlobot menu\n- @jidlobot help";
-            default -> "Neznámý příkaz. Zadej '@jidlobot help' pro dostupné příkazy.";
+            default -> "Zadej '@jidlobot help' pro dostupné příkazy.";
         };
     }
 }

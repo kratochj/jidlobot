@@ -15,7 +15,7 @@ import java.util.Locale;
 @Service
 public class DailyMenuMessageBuilder {
 
-    private final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("cs", "CZ"));
+    private final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.of("cs", "CZ"));
 
     public String buildPlainMessage(DailyMenu dailyMenu) {
         StringBuilder menuText = new StringBuilder("""
@@ -75,6 +75,7 @@ public class DailyMenuMessageBuilder {
         return MarkdownTextObject.builder().text(text).build();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private PlainTextObject plainText(String text) {
         return PlainTextObject.builder().text(text).build();
     }

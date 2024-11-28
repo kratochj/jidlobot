@@ -49,10 +49,6 @@ public class DailyMenu {
             return name;
         }
 
-        public String getDescription() {
-            return description;
-        }
-
         public String getAllergens() {
             return allergens;
         }
@@ -87,10 +83,6 @@ public class DailyMenu {
 
         public String getNameCz() {
             return nameCz;
-        }
-
-        public String getNameEn() {
-            return nameEn;
         }
 
         public String getAllergens() {

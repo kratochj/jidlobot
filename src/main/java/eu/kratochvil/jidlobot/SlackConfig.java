@@ -1,9 +1,6 @@
 package eu.kratochvil.jidlobot;
 
-import com.slack.api.bolt.App;
-import com.slack.api.bolt.AppConfig;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration

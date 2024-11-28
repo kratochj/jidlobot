@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: jidlobot
-          image: ghcr.io/kratochj/jidlobot@sha256:d4108afdfcc4414eab64a0399e699a9d0e95df10a809689f28288c8e01558ef1
+          image: ghcr.io/kratochj/jidlobot:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

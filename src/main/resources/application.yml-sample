@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: jidlobot
+logging:
+  level:
+    root: INFO
+    eu.kratochvil: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: "always"
+
+slack:
+  botToken: SECRET
+  appToken: SECRET
+
+menu:
+  url: "https://www.jidlovice.cz/telehouse/"

@@ -1,7 +1,7 @@
 # Slack Bot do send Daily Menu from Jidlovice Telehouse
 
 [![Build Pipeline](https://github.com/kratochj/jidlobot/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/kratochj/jidlobot/actions/workflows/docker-publish.yml)
-
+[![CodeQL](https://github.com/kratochj/jidlobot/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/kratochj/jidlobot/actions/workflows/github-code-scanning/codeql)
 ## Table of Contents
 
 - [Introduction](#introduction)

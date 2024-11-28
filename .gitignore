@@ -33,4 +33,4 @@ build/
 .vscode/
 
 # project specific files
-/src/main/resources/application-local-run.yml
+/src/main/resources/application-local.yml

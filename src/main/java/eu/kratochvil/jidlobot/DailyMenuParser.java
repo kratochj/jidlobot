@@ -41,11 +41,11 @@ public class DailyMenuParser {
             menu.setDishesOfTheDay(parseDishes(document));
 
             // Print the menu to verify
-            System.out.println("Soups:");
-            menu.getSoups().forEach(System.out::println);
+            log.debug("Soups:");
+            menu.getSoups().forEach(soup -> log.debug(soup.toString()));
 
-            System.out.println("\nDishes of the Day:");
-            menu.getDishesOfTheDay().forEach(System.out::println);
+            log.debug("\nDishes of the Day:");
+            menu.getDishesOfTheDay().forEach(dish -> log.debug(dish.toString()));
 
             return menu;
         } catch (IOException e) {

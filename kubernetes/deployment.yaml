@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jidlobot-deployment
+  namespace: fun
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jidlobot
+  template:
+    metadata:
+      labels:
+        app: jidlobot
+    spec:
+      containers:
+        - name: jidlobot
+          image: ghcr.io/kratochj/jidlobot@sha256:d4108afdfcc4414eab64a0399e699a9d0e95df10a809689f28288c8e01558ef1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SLACK_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secrets
+                  key: SLACK_BOT_TOKEN
+            - name: SLACK_APP_LEVEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secrets
+                  key: SLACK_APP_LEVEL_TOKEN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jidlobot-service
+  namespace: fun
+spec:
+  selector:
+    app: jidlobot
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

@@ -19,7 +19,7 @@ public class DailyMenuMessageBuilder {
 
     public String buildPlainMessage(DailyMenu dailyMenu) {
         StringBuilder menuText = new StringBuilder("""
-                *Denní Menu v Jidlovicích*
+                *Denní Menu v Jídlovicích*
                 
                 - *Polévky*:
                 """);
@@ -40,7 +40,7 @@ public class DailyMenuMessageBuilder {
         List<LayoutBlock> blocks = new ArrayList<>();
 
         // Header
-        blocks.add(Blocks.header(h -> h.text(plainText("Denní Menu v Jidlovicích"))));
+        blocks.add(Blocks.header(h -> h.text(plainText("Denní Menu v Jídlovicích"))));
 
         // Divider
         blocks.add(Blocks.divider());

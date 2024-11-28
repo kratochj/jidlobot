@@ -1,4 +1,4 @@
-FROM maven:3.9.4-eclipse-temurin-21 AS build
+FROM maven:3.9.4-amazoncorretto-21 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Stage 2: Run the Spring Boot app
-FROM eclipse-temurin:21-jre-jammy
+FROM openjdk:21
 
 # Set the working directory
 WORKDIR /app

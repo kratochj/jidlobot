@@ -4,29 +4,40 @@ import com.slack.api.bolt.App;
 import com.slack.api.bolt.AppConfig;
 import com.slack.api.bolt.jakarta_socket_mode.SocketModeApp;
 import com.slack.api.methods.SlackApiException;
+import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
-import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.event.AppMentionEvent;
 import eu.kratochvil.jidlobot.model.DailyMenu;
 import jakarta.annotation.PostConstruct;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
+import java.time.Instant;
 
 @Service
 public class SlackBotService {
 
     private final DailyMenuMessageBuilder dailyMenuMessageBuilder;
     private final DailyMenuParser dailyMenuParser;
+    private final BotMessageBuilder botMessageBuilder;
+    private final ApplicationConfig applicationConfig;
+
+    private DailyMenu dailyMenu = null;
+    private Instant dailyMenuLastUpdated = null;
 
     private final SlackConfig slackConfig;
 
-    public SlackBotService(SlackConfig slackConfig, DailyMenuMessageBuilder dailyMenuMessageBuilder, DailyMenuParser dailyMenuParser) {
+    public SlackBotService(SlackConfig slackConfig,
+                           DailyMenuMessageBuilder dailyMenuMessageBuilder,
+                           DailyMenuParser dailyMenuParser,
+                           BotMessageBuilder botMessageBuilder,
+                           ApplicationConfig applicationConfig) {
         this.slackConfig = slackConfig;
         this.dailyMenuMessageBuilder = dailyMenuMessageBuilder;
         this.dailyMenuParser = dailyMenuParser;
+        this.botMessageBuilder = botMessageBuilder;
+        this.applicationConfig = applicationConfig;
     }
 
     @PostConstruct
@@ -36,22 +47,10 @@ public class SlackBotService {
         App app = new App(appConfig);
 
         app.event(AppMentionEvent.class, (req, ctx) -> {
-
-            String response = processCommand(req.getEvent().getText());
-            if (response != null) {
-                ctx.say(response);
-                return ctx.ack();
-            }
-
-            DailyMenu dailyMenu = dailyMenuParser.parse();
-            String channelId = req.getEvent().getChannel();
-            List<LayoutBlock> blocks = dailyMenuMessageBuilder.buildFormattedMessage(dailyMenu);
             try {
-                ChatPostMessageResponse responseMenu = ctx.client().chatPostMessage(r -> r
-                        .channel(channelId)
-                        .blocks(blocks)
-                        .text(dailyMenuMessageBuilder.buildPlainMessage(dailyMenu))
-                );
+                ChatPostMessageRequest message = processCommand(req.getEvent().getText());
+                message.setChannel(ctx.getChannelId());
+                ChatPostMessageResponse responseMenu = ctx.client().chatPostMessage(message);
                 if (!responseMenu.isOk()) {
                     ctx.logger.error("Error posting message: {}", responseMenu.getError());
                 }
@@ -65,14 +64,23 @@ public class SlackBotService {
         socketModeApp.start();
     }
 
-    private @Nullable String processCommand(String text) {
+    private DailyMenu getMenu() {
+        if(!applicationConfig.isCacheEnabled() || dailyMenu == null || dailyMenuLastUpdated == null
+                || dailyMenuLastUpdated.isBefore(Instant.now().minusSeconds(applicationConfig.getCacheForSeconds()))) {
+            dailyMenu = dailyMenuParser.parse();
+            dailyMenuLastUpdated = Instant.now();
+        }
+        return dailyMenu;
+    }
+
+    private @NotNull ChatPostMessageRequest processCommand(String text) {
         // Remove the bot mention from the text
         String commandText = text.replaceAll("<@\\w+>", "").trim().toLowerCase();
 
         return switch (commandText) {
-            case "menu" -> null;
-            case "help" -> "Dostupné příkazy:\n- @jidlobot menu\n- @jidlobot help";
-            default -> "Zadej '@jidlobot help' pro dostupné příkazy.";
+            case "menu" -> dailyMenuMessageBuilder.getChatPostMessage(getMenu());
+            case "help" -> botMessageBuilder.getChatPostHelpMessage();
+            default -> botMessageBuilder.getChatPostGenericMessage();
         };
     }
 }

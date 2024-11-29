@@ -1,21 +1,27 @@
 package eu.kratochvil.jidlobot;
 
+import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.model.block.Blocks;
 import com.slack.api.model.block.LayoutBlock;
-import com.slack.api.model.block.composition.MarkdownTextObject;
-import com.slack.api.model.block.composition.PlainTextObject;
 import eu.kratochvil.jidlobot.model.DailyMenu;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-@Service
+@Component
 public class DailyMenuMessageBuilder {
 
     private final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.of("cs", "CZ"));
+
+    public ChatPostMessageRequest getChatPostMessage(DailyMenu dailyMenu) {
+        return ChatPostMessageRequest.builder()
+                .blocks(buildFormattedMessage(dailyMenu))
+                .text(buildPlainMessage(dailyMenu))
+                .build();
+    }
 
     public String buildPlainMessage(DailyMenu dailyMenu) {
         StringBuilder menuText = new StringBuilder("""
@@ -40,18 +46,18 @@ public class DailyMenuMessageBuilder {
         List<LayoutBlock> blocks = new ArrayList<>();
 
         // Header
-        blocks.add(Blocks.header(h -> h.text(plainText("Denní Menu v Jídlovicích"))));
+        blocks.add(SlackTextUtils.buildHeaderLayoutBlock("Denní Menu v Jídlovicích"));
 
         // Divider
         blocks.add(Blocks.divider());
 
         // Soups Section
         if (!dailyMenu.getSoups().isEmpty()) {
-            blocks.add(Blocks.section(s -> s.text(markdownText("*Polévky:*"))));
+            blocks.add(SlackTextUtils.buildTextLayoutBlock("*Polévky:*"));
 
             for (DailyMenu.Soup soup : dailyMenu.getSoups()) {
                 String soupText = String.format("• %s (%s) - %s", soup.getName(), soup.getAllergens(), formatPrice(soup.getPrice()));
-                blocks.add(Blocks.section(s -> s.text(markdownText(soupText))));
+                blocks.add(SlackTextUtils.buildTextLayoutBlock(soupText));
             }
 
             // Divider
@@ -60,24 +66,15 @@ public class DailyMenuMessageBuilder {
 
         // Main Dishes Section
         if (!dailyMenu.getDishesOfTheDay().isEmpty()) {
-            blocks.add(Blocks.section(s -> s.text(markdownText("*Hlavní jídla:*"))));
+            blocks.add(SlackTextUtils.buildHeaderLayoutBlock("*Hlavní jídla:*"));
 
             for (DailyMenu.Dish dish : dailyMenu.getDishesOfTheDay()) {
                 String dishText = String.format("• %s (%s) - %s", dish.getNameCz(), dish.getAllergens(), formatPrice(dish.getPrice()));
-                blocks.add(Blocks.section(s -> s.text(markdownText(dishText))));
+                blocks.add(SlackTextUtils.buildTextLayoutBlock(dishText));
             }
         }
 
         return blocks;
-    }
-
-    private MarkdownTextObject markdownText(String text) {
-        return MarkdownTextObject.builder().text(text).build();
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private PlainTextObject plainText(String text) {
-        return PlainTextObject.builder().text(text).build();
     }
 
     private String formatPrice(double price) {

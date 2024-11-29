@@ -9,13 +9,14 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 public class DailyMenuParser {
 
     public static final Logger log = LoggerFactory.getLogger(DailyMenuParser.class);
@@ -56,7 +57,7 @@ public class DailyMenuParser {
 
     private List<DailyMenu.Soup> parseSoups(Document document) {
         List<DailyMenu.Soup> soups = new ArrayList<>();
-        Elements soupElements = document.select("p:contains(POLÉVKY)").nextAll("p");
+        Elements soupElements = document.select("p:contains(POLÉVKY)").nextAll();
 
         boolean isCzechLine = true; // Toggle to track Czech and English lines
         String czechText = "";     // Temporary storage for Czech text
@@ -122,7 +123,9 @@ public class DailyMenuParser {
                 // Process English line: extract English description and price
                 int lastPipeIndex = text.lastIndexOf("|");
                 String englishDescription = (lastPipeIndex > -1) ? text.substring(0, lastPipeIndex).trim() : text.trim();
-                String priceText = englishDescription.substring(englishDescription.lastIndexOf(' ')).trim();
+                String[] splittedLine = text.split(" ");
+                String priceText = splittedLine[splittedLine.length - 2];
+                //String priceText = text.substring(text.lastIndexOf(' ')).trim();
                 double price = parsePrice(priceText);
 
                 // Add the dish to the list

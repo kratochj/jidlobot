@@ -13,14 +13,14 @@ public class SlackConfig {
     private final String botToken;
     private final String appToken;
 
-    public SlackConfig(@Value("${slack.botToken}") String botToken,
-                       @Value("${slack.appToken}") String appToken
+    public SlackConfig(@Value("${slack.bot-token}") String botToken,
+                       @Value("${slack.app-token}") String appToken
     ) {
         this.botToken = botToken;
         this.appToken = appToken;
-        log.info("Slack configuration loaded:");
-        log.info("  Bot token: '{}'", botToken);
-        log.info("  App token: '{}'", appToken);
+        log.info("Slack configuration loaded");
+        log.debug("  Bot token: '{}'", botToken);
+        log.debug("  App token: '{}'", appToken);
     }
 
     public String getBotToken() {

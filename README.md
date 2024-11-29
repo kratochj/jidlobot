@@ -1,178 +1,162 @@
-# Slack Bot do send Daily Menu from Jidlovice Telehouse
-
-[![Docker](https://github.com/kratochj/jidlobot/actions/workflows/build.yml/badge.svg)](https://github.com/kratochj/jidlobot/actions/workflows/build.yml)
+# Jidlobot
+[![Docker](https://github.com/kratochj/jidlobot/actions/workflows/build.yml/badge.svg)](https://github.com/kratochj/jidlobot/actions/workflows/build.yml)  
 [![CodeQL](https://github.com/kratochj/jidlobot/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/kratochj/jidlobot/actions/workflows/github-code-scanning/codeql)
-## Table of Contents
 
-- [Introduction](#introduction)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Setup](#setup)
-    - [Clone the Repository](#clone-the-repository)
-    - [Configure the Slack App](#configure-the-slack-app)
-    - [Set Up Environment Variables](#set-up-environment-variables)
-    - [Install Dependencies](#install-dependencies)
-- [Configuration](#configuration)
-- [Running the Application](#running-the-application)
-- [Interacting with the Bot](#interacting-with-the-bot)
-- [Health Checks](#health-checks)
-- [Contributing](#contributing)
+**Jidlobot** is a Slack bot designed to fetch and display the daily menu from **Jídlovice**. Built with **Spring Boot**, it integrates seamlessly with Slack using the **Bolt framework**.
 
-## Introduction
+---
 
-This project is a Slack bot built with Java using Spring Boot and Bolt for Java SDK. The bot connects to Slack via Socket Mode, allowing it to run behind a firewall without exposing a public URL. It listens for mentions and responds with daily menu information or help messages. The bot also includes a health check endpoint implemented with Spring Boot Actuator.
+## 🌟 Features
 
-## Features
+- **Fetch Daily Menu**: Automatically retrieves the daily menu, including soups, main dishes, and special dishes.
+- **Slack Integration**: Responds to mentions and commands in Slack via Socket Mode.
+- **Cache Management**: Optimizes HTTP requests by caching menu data for a configurable duration.
 
-- **Socket Mode Connection**: Uses Slack's Socket Mode to connect without exposing a public endpoint.
-- **Event Handling**: Listens for `app_mention` events to respond to user messages.
-- **Message Formatting**: Utilizes Slack's Block Kit for rich message formatting.
-- **Health Checks**: Implements a custom health indicator for monitoring bot status via Actuator.
-- **Localization**: Formats prices according to Czech locale conventions.
-- **Extensibility**: Easily add new commands or modify existing ones.
+---
 
-## Prerequisites
+## ⚙️ Setup
 
-- **Java Development Kit (JDK) 21 or higher**
-- **Maven 3.6+**
-- **Slack Workspace**: Access to a Slack workspace where you can install and test the bot.
-- **Slack App**: A Slack app configured with the necessary permissions.
+### Prerequisites
 
-## Setup
+- **Java** 21
+- **Maven** 3.x
+- **Docker** (optional, for containerization)
+- A Slack workspace with a configured bot user
 
-### Clone the Repository
+### Obtaining Slack Keys
 
-```bash
-git clone https://github.com/kratochj/jidlobot.git
-cd jidlobot
-```
+To use Jidlobot, you will need two Slack keys:
+1. **Bot User OAuth Token (`SLACK_BOT_TOKEN`)**
+2. **App-Level Token (`SLACK_APP_LEVEL_TOKEN`)**
 
-### Configure the Slack App
+Follow these steps to obtain them:
 
 1. **Create a Slack App**:
-    - Go to [Slack API Apps](https://api.slack.com/apps) and create a new app.
-    - Choose your workspace and provide an app name.
+    - Visit the [Slack API Apps Page](https://api.slack.com/apps) and click **Create an App**.
+    - Select **From scratch** and give your app a name (e.g., `Jidlobot`), then choose the appropriate Slack workspace.
 
-2. **Enable Socket Mode**:
-    - Navigate to **Settings > Socket Mode**.
-    - Enable **Socket Mode**.
-    - Create an **App-Level Token** with the scope `connections:write`.
-    - **Save the App-Level Token (`xapp-` token)**.
-
-3. **Configure OAuth & Permissions**:
-    - Go to **Features > OAuth & Permissions**.
-    - Under **Scopes**, add the following **Bot Token Scopes**:
+2. **Enable Bot Token Scopes**:
+    - In the **OAuth & Permissions** section of your app, scroll to **Bot Token Scopes**.
+    - Add the following scopes:
         - `app_mentions:read`
         - `chat:write`
-    - Install or reinstall the app to your workspace.
-    - **Save the Bot User OAuth Token (`xoxb-` token)**.
+        - `channels:read`
+        - `groups:read`
 
-4. **Enable Event Subscriptions**:
-    - Go to **Features > Event Subscriptions**.
-    - Enable **Event Subscriptions**.
-    - Under **Subscribe to bot events**, add `app_mention`.
+3. **Install the App to Your Workspace**:
+    - Once scopes are configured, install the app to your workspace from the **OAuth & Permissions** section.
+    - Copy the **Bot User OAuth Token** (starts with `xoxb-`) and use it as `SLACK_BOT_TOKEN`.
 
-### Set Up Environment Variables
+4. **Generate an App-Level Token**:
+    - Go to the **Socket Mode** section and enable Socket Mode.
+    - Click **Generate Token and Scopes**, then add the `connections:write` scope.
+    - Copy the **App-Level Token** (starts with `xapp-`) and use it as `SLACK_APP_LEVEL_TOKEN`.
 
-Set the following variables with your Slack tokens:
+---
 
-```bash
-export SLACK_BOT_TOKEN=xoxb-your-bot-user-oauth-token
-export SLACK_APP_LEVEL_TOKEN=xapp-your-app-level-token
-```
+### Installation
 
-Alternatively, you can set these in your IDE's run configuration.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/<your-username>/jidlobot.git
+   cd jidlobot
+   ```
 
-### Install Dependencies
+2. **Build the project**:
+   ```bash
+   mvn install
+   ```
 
-Run the following command to download and install project dependencies:
+3. **Configure Slack Tokens**:  
+   Create a Kubernetes `Secret` with your Slack bot credentials:
 
-```bash
-mvn clean install
-```
+   ```yaml
+   apiVersion: v1
+   kind: Secret
+   metadata:
+     name: slack-secrets
+     namespace: fun
+   type: Opaque
+   data:
+     SLACK_BOT_TOKEN: <base64-encoded-value>
+     SLACK_APP_LEVEL_TOKEN: <base64-encoded-value>
+   ```
 
-## Configuration
+4. **Run the application**:
+   ```bash
+   mvn spring-boot:run
+   ```
 
-The application uses `application.yml` for configuration:
+5. **Deploy to Kubernetes** (optional):  
+   Use the `jidlobot-deployment.yaml` file provided in the repository. Adjust the image name and tag as necessary.
+
+   The pre-built Docker image for `jidlobot` is available on [GitHub Container Registry (GHCR)](https://github.com/kratochj/jidlobot/pkgs/container/jidlobot).
+
+---
+
+## 🔧 Configuration
+
+Customize the application using the `application.yaml` file:
 
 ```yaml
 slack:
   bot-token: ${SLACK_BOT_TOKEN}
-  app-level-token: ${SLACK_APP_LEVEL_TOKEN}
+  app-token: ${SLACK_APP_LEVEL_TOKEN}
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
+menu:
+  url: "https://www.jidlovice.cz/telehouse/"
+  cache-enabled: true
+  cache-for-seconds: 3600
 ```
 
-- **Tokens**: Tokens are injected from environment variables.
-- **Actuator Endpoints**: Exposes health and info endpoints.
+---
 
-## Running the Application
+## 🛠️ Usage
 
-Start the Spring Boot application:
+- Mention the bot in any channel with commands like:
+  ```text
+  @jidlobot menu
+  ```
+  to receive the current menu.
 
+- Use:
+  ```text
+  @jidlobot help
+  ```
+  to view help instructions.
+
+---
+
+## 💻 Development
+
+### Running Tests
+Run the test suite using Maven:
 ```bash
-mvn spring-boot:run
+mvn test
 ```
 
-Or, if you prefer to run the packaged jar:
-
+### Code Coverage
+Generate a code coverage report:
 ```bash
-java -jar target/your-application.jar
+mvn jacoco:report
 ```
 
-## Interacting with the Bot
+### Building a Docker Image
+Build and push Docker images using the provided GitHub Actions workflow. Images are automatically pushed to **GitHub Container Registry (GHCR)**.
 
-In your Slack workspace:
-
-1. **Mention the Bot**: In any channel where the bot is present, type `@jidlobot` followed by a command.
-2. **Available Commands**:
-    - `@jidlobot menu`: The bot responds with the daily menu.
-    - `@jidlobot help`: The bot lists all available commands.
-
-**Example**:
-
-```
-@jidlobot menu
-```
-
-## Health Checks
-
-The application includes a custom health indicator for the Slack bot. Access the health endpoint:
-
+To pull the pre-built Docker image, use:
 ```bash
-http://localhost:8080/actuator/health
+docker pull ghcr.io/kratochj/jidlobot:latest
 ```
 
-**Sample Response**:
+---
 
-```json
-{
-  "status": "UP",
-  "components": {
-    "slackBot": {
-      "status": "UP",
-      "details": {
-        "SlackBot": "Operational"
-      }
-    }
-  }
-}
-```
+## 📜 License
 
-- The health check verifies:
-    - **Bot Token Validity**: Ensures the bot token is valid using `auth.test` API.
-    - **Socket Mode Connectivity**: Checks if the Socket Mode client is connected.
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
-## Contributing
+---
 
-Contributions are welcome! Please follow these steps:
+## 🤝 Contributors
 
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Commit your changes with clear messages.
-4. Submit a pull request to the `main` branch.
-
+Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for the code of conduct and details on submitting pull requests.

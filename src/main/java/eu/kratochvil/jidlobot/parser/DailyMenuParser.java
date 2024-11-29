@@ -3,6 +3,7 @@ package eu.kratochvil.jidlobot.parser;
 import eu.kratochvil.jidlobot.JsoupConnector;
 import eu.kratochvil.jidlobot.model.DailyMenu;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -46,10 +47,12 @@ public class DailyMenuParser {
             DailyMenu menu = new DailyMenu();
             menu.setSoups(parseMenuItems(document, "p:contains(POLÉVKY)", "JÍDLA DNE", new SoupMenuItemCreator()));
             menu.setDishesOfTheDay(parseMenuItems(document, "h4:contains(JÍDLA DNE)", "JÍDLOVICKÝ SPECIÁL", new DishMenuItemCreator()));
+            menu.setSpecialDishes(parseMenuItems(document, "h4:contains(JÍDLOVICKÝ SPECIÁL)", "JÍDLOVICKÉ STÁLICE", new DishMenuItemCreator()));
 
             // Print the menu to verify
             logMenuItems("Soups", menu.getSoups());
             logMenuItems("Dishes of the Day:", menu.getDishesOfTheDay());
+            logMenuItems("Special Dish:", menu.getSpecialDishes());
 
             return menu;
         } catch (IOException e) {
@@ -69,7 +72,7 @@ public class DailyMenuParser {
      * @param itemCreator the creator object used to instantiate menu item objects of type T.
      * @return a list of menu items of type T parsed and created from the specified section of the document.
      */
-    private <T extends DailyMenu.MenuItem> List<T> parseMenuItems(Document document, String sectionStartSelector, String sectionEnd, MenuItemCreator<T> itemCreator) {
+    private <T extends DailyMenu.MenuItem> List<T> parseMenuItems(@NotNull Document document, @NotNull String sectionStartSelector, @Nullable String sectionEnd, @NotNull MenuItemCreator<T> itemCreator) {
         List<T> items = new ArrayList<>();
 
         Elements elements = document.select(sectionStartSelector).nextAll();
@@ -79,7 +82,9 @@ public class DailyMenuParser {
 
         for (Element element : elements) {
             String text = element.text().trim();
-            if (text.contains(sectionEnd)) break;
+            if (sectionEnd != null && text.contains(sectionEnd)) break;
+
+            if (!element.tagName().equals("p")) continue;
 
             if (isCzechLine) {
                 String[] parts = text.split("\\(");

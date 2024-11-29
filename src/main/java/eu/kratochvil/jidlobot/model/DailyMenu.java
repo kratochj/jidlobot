@@ -7,6 +7,7 @@ import java.util.List;
 public class DailyMenu {
     private List<Soup> soups;
     private List<Dish> dishesOfTheDay;
+    private List<Dish> specialDishes;
 
     public List<Soup> getSoups() {
         return soups;
@@ -14,6 +15,14 @@ public class DailyMenu {
 
     public void setSoups(List<Soup> soups) {
         this.soups = soups;
+    }
+
+    public List<Dish> getSpecialDishes() {
+        return specialDishes;
+    }
+
+    public void setSpecialDishes(List<Dish> specialDish) {
+        this.specialDishes = specialDish;
     }
 
     public List<Dish> getDishesOfTheDay() {
@@ -26,10 +35,11 @@ public class DailyMenu {
 
     @Override
     public String toString() {
-        return "DailyMenu{" +
-                "soups=" + soups +
-                ", dishesOfTheDay=" + dishesOfTheDay +
-                '}';
+        return new ToStringBuilder(this)
+                .append("soups", soups)
+                .append("dishesOfTheDay", dishesOfTheDay)
+                .append("specialDishes", specialDishes)
+                .toString();
     }
 
     public static class Soup implements MenuItem {

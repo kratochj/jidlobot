@@ -3,6 +3,7 @@ package eu.kratochvil.jidlobot;
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.auth.AuthTestResponse;
+import eu.kratochvil.jidlobot.config.SlackConfig;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;

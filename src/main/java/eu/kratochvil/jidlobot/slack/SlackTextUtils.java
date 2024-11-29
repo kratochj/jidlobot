@@ -1,4 +1,4 @@
-package eu.kratochvil.jidlobot;
+package eu.kratochvil.jidlobot.slack;
 
 import com.slack.api.model.block.Blocks;
 import com.slack.api.model.block.LayoutBlock;

@@ -24,22 +24,20 @@ public class DailyMenuMessageBuilder {
     }
 
     public String buildPlainMessage(DailyMenu dailyMenu) {
-        StringBuilder menuText = new StringBuilder("""
-                *Denní Menu v Jídlovicích*
-                
-                - *Polévky*:
-                """);
+        StringBuilder menuText = new StringBuilder("*Denní Menu v Jídlovicích*\n");
 
-        for (DailyMenu.Soup soup : dailyMenu.getSoups()) {
-            menuText.append(String.format("- %s (%s) - %s\n", soup.getName(), soup.getAllergens(), formatPrice(soup.getPrice())));
-        }
-
-        menuText.append("- *Hlavní jídla*:\n");
-        for (DailyMenu.Dish dish : dailyMenu.getDishesOfTheDay()) {
-            menuText.append(String.format("- %s (%s) - %s\n", dish.getNameCz(), dish.getAllergens(), formatPrice(dish.getPrice())));
-        }
+        addTextMenuItems(menuText, "Polévky", dailyMenu.getSoups());
+        addTextMenuItems(menuText, "Hlavní jídla", dailyMenu.getDishesOfTheDay());
+        addTextMenuItems(menuText, "Jídlovický speciál", dailyMenu.getSpecialDishes());
 
         return menuText.toString();
+    }
+
+    private <T extends DailyMenu.MenuItem> void addTextMenuItems(StringBuilder menuText, String heading, List<T> menuItems) {
+        menuText.append("- *").append(heading).append("*:\n");
+        for (DailyMenu.MenuItem dish :menuItems) {
+            menuText.append(String.format("- %s (%s) - %s\n", dish.getName(), dish.getAllergens(), formatPrice(dish.getPrice())));
+        }
     }
 
     public List<LayoutBlock> buildFormattedMessage(DailyMenu dailyMenu) {
@@ -48,32 +46,34 @@ public class DailyMenuMessageBuilder {
         // Header
         blocks.add(SlackTextUtils.buildHeaderLayoutBlock("Denní Menu v Jídlovicích"));
 
-        // Divider
-        blocks.add(Blocks.divider());
 
         // Soups Section
         if (!dailyMenu.getSoups().isEmpty()) {
-            blocks.add(SlackTextUtils.buildTextLayoutBlock("*Polévky:*"));
-
-            for (DailyMenu.Soup soup : dailyMenu.getSoups()) {
-                String soupText = String.format("• %s (%s) - %s", soup.getName(), soup.getAllergens(), formatPrice(soup.getPrice()));
-                blocks.add(SlackTextUtils.buildTextLayoutBlock(soupText));
-            }
-
-            // Divider
-            blocks.add(Blocks.divider());
+            blocks.addAll(addMenuItemsSection("Polévky:", dailyMenu.getSoups()));
         }
 
         // Main Dishes Section
         if (!dailyMenu.getDishesOfTheDay().isEmpty()) {
-            blocks.add(SlackTextUtils.buildTextLayoutBlock("*Hlavní jídla:*"));
-
-            for (DailyMenu.Dish dish : dailyMenu.getDishesOfTheDay()) {
-                String dishText = String.format("• %s (%s) - %s", dish.getNameCz(), dish.getAllergens(), formatPrice(dish.getPrice()));
-                blocks.add(SlackTextUtils.buildTextLayoutBlock(dishText));
-            }
+            blocks.addAll(addMenuItemsSection("Hlavní jídla:", dailyMenu.getDishesOfTheDay()));
         }
 
+        // Specials Section
+        if (!dailyMenu.getDishesOfTheDay().isEmpty()) {
+            blocks.addAll(addMenuItemsSection("Jídlovický speciál:", dailyMenu.getSpecialDishes()));
+        }
+
+        return blocks;
+    }
+
+    private <T extends DailyMenu.MenuItem> List<LayoutBlock> addMenuItemsSection(String heading, List<T> menuItems) {
+        List<LayoutBlock> blocks = new ArrayList<>();
+        blocks.add(Blocks.divider());
+        blocks.add(SlackTextUtils.buildTextLayoutBlock(String.format("*%s*", heading)));
+
+        for (DailyMenu.MenuItem menuItem : menuItems) {
+            String menuItemText = String.format("• %s (%s) - %s", menuItem.getName(), menuItem.getAllergens(), formatPrice(menuItem.getPrice()));
+            blocks.add(SlackTextUtils.buildTextLayoutBlock(menuItemText));
+        }
         return blocks;
     }
 

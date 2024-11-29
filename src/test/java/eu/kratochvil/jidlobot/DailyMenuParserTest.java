@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.net.URL;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -43,7 +42,7 @@ public class DailyMenuParserTest {
 
         for (int i = 0; i < menu.getSoups().size(); i++) {
             assertNotNull(menu.getSoups().get(i).getName());
-            assertTrue(menu.getSoups().get(i).getPrice()>0);
+            assertTrue(menu.getSoups().get(i).getPrice() > 0);
             assertNotNull(menu.getSoups().get(i).getAllergens());
         }
     }

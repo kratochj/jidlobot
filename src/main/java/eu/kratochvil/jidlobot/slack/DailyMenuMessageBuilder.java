@@ -34,6 +34,9 @@ public class DailyMenuMessageBuilder {
     }
 
     private <T extends DailyMenu.MenuItem> void addTextMenuItems(StringBuilder menuText, String heading, List<T> menuItems) {
+        if (menuItems.isEmpty()) {
+            return;
+        }
         menuText.append("- *").append(heading).append("*:\n");
         for (DailyMenu.MenuItem dish :menuItems) {
             menuText.append(String.format("- %s (%s) - %s\n", dish.getName(), dish.getAllergens(), formatPrice(dish.getPrice())));

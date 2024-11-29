@@ -66,7 +66,7 @@ public class DailyMenuMessageBuilder {
 
         // Main Dishes Section
         if (!dailyMenu.getDishesOfTheDay().isEmpty()) {
-            blocks.add(SlackTextUtils.buildHeaderLayoutBlock("*Hlavní jídla:*"));
+            blocks.add(SlackTextUtils.buildTextLayoutBlock("*Hlavní jídla:*"));
 
             for (DailyMenu.Dish dish : dailyMenu.getDishesOfTheDay()) {
                 String dishText = String.format("• %s (%s) - %s", dish.getNameCz(), dish.getAllergens(), formatPrice(dish.getPrice()));

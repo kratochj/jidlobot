@@ -1,5 +1,7 @@
 FROM maven:3.9.4-amazoncorretto-21 AS build
 
+LABEL org.opencontainers.image.description="This project is a Slack bot built with Java using Spring Boot and Bolt for Java SDK. The bot connects to Slack via Socket Mode, allowing it to run behind a firewall without exposing a public URL. It listens for mentions and responds with daily menu information or help messages. The bot also includes a health check endpoint implemented with Spring Boot Actuator."
+
 # Set the working directory
 WORKDIR /app
 

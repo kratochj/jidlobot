@@ -1,6 +1,7 @@
 package eu.kratochvil.jidlobot;
 
 import eu.kratochvil.jidlobot.model.DailyMenu;
+import eu.kratochvil.jidlobot.parser.DailyMenuParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Test;

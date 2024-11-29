@@ -8,6 +8,7 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.event.AppMentionEvent;
 import eu.kratochvil.jidlobot.model.DailyMenu;
+import eu.kratochvil.jidlobot.parser.DailyMenuParser;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.jetbrains.annotations.NotNull;

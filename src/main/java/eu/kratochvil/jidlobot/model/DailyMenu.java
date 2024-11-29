@@ -32,7 +32,7 @@ public class DailyMenu {
                 '}';
     }
 
-    public static class Soup {
+    public static class Soup implements MenuItem {
         private final String name;
         private final String description;
         private final String allergens;
@@ -68,7 +68,7 @@ public class DailyMenu {
         }
     }
 
-    public static class Dish {
+    public static class Dish implements MenuItem {
         private final String nameCz;
         private final String nameEn;
         private final String allergens;
@@ -83,6 +83,11 @@ public class DailyMenu {
 
         public String getNameCz() {
             return nameCz;
+        }
+
+        @Override
+        public String getName() {
+            return getNameCz();
         }
 
         public String getAllergens() {
@@ -102,5 +107,11 @@ public class DailyMenu {
                     .append("price", price)
                     .toString();
         }
+    }
+
+    public interface MenuItem {
+        String getName();
+        String getAllergens();
+        double getPrice();
     }
 }

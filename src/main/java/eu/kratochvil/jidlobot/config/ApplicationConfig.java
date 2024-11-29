@@ -1,4 +1,4 @@
-package eu.kratochvil.jidlobot;
+package eu.kratochvil.jidlobot.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

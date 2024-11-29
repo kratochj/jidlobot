@@ -9,6 +9,7 @@ import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.event.AppMentionEvent;
 import eu.kratochvil.jidlobot.model.DailyMenu;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class SlackBotService {
 
     private DailyMenu dailyMenu = null;
     private Instant dailyMenuLastUpdated = null;
+    private SocketModeApp socketModeApp = null;
 
     private final SlackConfig slackConfig;
 
@@ -60,7 +62,7 @@ public class SlackBotService {
             return ctx.ack();
         });
 
-        SocketModeApp socketModeApp = new SocketModeApp(slackConfig.getAppToken(), app);
+        socketModeApp = new SocketModeApp(slackConfig.getAppToken(), app);
         socketModeApp.start();
     }
 
@@ -82,5 +84,12 @@ public class SlackBotService {
             case "help" -> botMessageBuilder.getChatPostHelpMessage();
             default -> botMessageBuilder.getChatPostGenericMessage();
         };
+    }
+
+    @PreDestroy
+    public void stop() throws Exception {
+        if (socketModeApp != null) {
+            socketModeApp.stop(); // Gracefully stop the SocketModeApp
+        }
     }
 }

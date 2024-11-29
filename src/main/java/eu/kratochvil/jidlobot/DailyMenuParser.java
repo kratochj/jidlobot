@@ -25,6 +25,13 @@ public class DailyMenuParser {
         this.jsoupConnector = jsoupConnector;
     }
 
+    /**
+     * Parses the daily menu from the provided URL.
+     *
+     * @param menuUrl the URL of the menu to parse. Must not be null.
+     * @return a DailyMenu object containing soups and dishes of the day,
+     *         or null if an error occurs during fetching or parsing.
+     */
     public DailyMenu parse(@NotNull String menuUrl) {
         try {
             // Download and parse the webpage

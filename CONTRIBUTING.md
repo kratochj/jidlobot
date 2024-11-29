@@ -69,7 +69,7 @@ Thank you for considering contributing to Jidlobot! Your input and contributions
 
 ## Code of Conduct
 
-This project adheres to a Contributor Code of Conduct. By participating, you are expected to uphold this code.
+This project adheres to a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
 ## License
 

@@ -1,16 +1,14 @@
 package eu.kratochvil.jidlobot;
 
 import eu.kratochvil.jidlobot.model.DailyMenu;
-import jakarta.annotation.PostConstruct;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,18 +19,7 @@ public class DailyMenuParser {
 
     public static final Logger log = LoggerFactory.getLogger(DailyMenuParser.class);
 
-    private final String menuUrl;
-
-    public DailyMenuParser(@Value("${menu.url}") String menuUrl) {
-        this.menuUrl = menuUrl;
-    }
-
-    @PostConstruct
-    public void getResult() {
-        parse();
-    }
-
-    public DailyMenu parse() {
+    public DailyMenu parse(@NotNull String menuUrl) {
         try {
             // Download and parse the webpage
             Document document = Jsoup.connect(menuUrl).get();

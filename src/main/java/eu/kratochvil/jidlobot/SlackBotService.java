@@ -67,7 +67,7 @@ public class SlackBotService {
     private DailyMenu getMenu() {
         if(!applicationConfig.isCacheEnabled() || dailyMenu == null || dailyMenuLastUpdated == null
                 || dailyMenuLastUpdated.isBefore(Instant.now().minusSeconds(applicationConfig.getCacheForSeconds()))) {
-            dailyMenu = dailyMenuParser.parse();
+            dailyMenu = dailyMenuParser.parse(applicationConfig.getUrl());
             dailyMenuLastUpdated = Instant.now();
         }
         return dailyMenu;

@@ -19,10 +19,16 @@ public class DailyMenuParser {
 
     public static final Logger log = LoggerFactory.getLogger(DailyMenuParser.class);
 
+    private final JsoupConnector jsoupConnector;
+
+    public DailyMenuParser(JsoupConnector jsoupConnector) {
+        this.jsoupConnector = jsoupConnector;
+    }
+
     public DailyMenu parse(@NotNull String menuUrl) {
         try {
             // Download and parse the webpage
-            Document document = Jsoup.connect(menuUrl).get();
+            Document document = jsoupConnector.getDocument(menuUrl);
 
             DailyMenu menu = new DailyMenu();
             menu.setSoups(parseSoups(document));

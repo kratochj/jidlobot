@@ -46,8 +46,8 @@ public class DailyMenuParser {
 
             DailyMenu menu = new DailyMenu();
             menu.setSoups(parseMenuItems(document, "p:contains(POLÉVKY)", "JÍDLA DNE", new SoupMenuItemCreator()));
-            menu.setDishesOfTheDay(parseMenuItems(document, "h4:contains(JÍDLA DNE)", "JÍDLOVICKÝ SPECIÁL", new DishMenuItemCreator()));
-            menu.setSpecialDishes(parseMenuItems(document, "h4:contains(JÍDLOVICKÝ SPECIÁL)", "JÍDLOVICKÉ STÁLICE", new DishMenuItemCreator()));
+            menu.setDishesOfTheDay(parseMenuItems(document, "h4:contains(JÍDLA DNE), p:contains(JÍDLA DNE)", "JÍDLOVICKÝ SPECIÁL", new DishMenuItemCreator()));
+            menu.setSpecialDishes(parseMenuItems(document, "h4:contains(JÍDLOVICKÝ SPECIÁL), p:contains(JÍDLOVICKÝ SPECIÁL)", "JÍDLOVICKÉ STÁLICE", new DishMenuItemCreator()));
 
             // Print the menu to verify
             logMenuItems("Soups", menu.getSoups());
@@ -91,7 +91,16 @@ public class DailyMenuParser {
                 czechText = capitalizeFirstLetter(parts[0].trim());
                 allergens = parts.length > 1 ? parts[1].replace(")", "").trim() : "";
             } else {
-                String priceText = text.replaceAll(".*\\|", "").replace("Kč", "").trim();
+                String priceText;
+                if (text.contains("|")) {
+                    priceText = text.replaceAll(".*\\|", "").replace("Kč", "").trim();
+                } else {
+                    if (text.contains("Kč")) {
+                        priceText = text.substring(0, text.lastIndexOf(" ")).substring(text.lastIndexOf(" ", text.lastIndexOf(" ") - 1) + 1);
+                    } else {
+                        priceText = text.substring(text.lastIndexOf(" ") + 1);
+                    }
+                }
                 double price = parsePrice(priceText);
                 items.add(itemCreator.create(czechText, "", allergens, price));
             }

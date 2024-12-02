@@ -12,35 +12,53 @@ import java.util.List;
 public class BotMessageBuilder {
 
 
-    public ChatPostMessageRequest getChatPostHelpMessage() {
+    public ChatPostMessageRequest getChatPostHelpMessage(boolean isIm) {
         return ChatPostMessageRequest.builder()
-                .blocks(buildFormattedHelpMessage())
-                .text(buildPlainHelpMessage())
+                .blocks(buildFormattedHelpMessage(isIm))
+                .text(buildPlainHelpMessage(isIm))
                 .build();
     }
 
-    private List<LayoutBlock> buildFormattedHelpMessage() {
+    private List<LayoutBlock> buildFormattedHelpMessage(boolean isIm) {
         List<LayoutBlock> blocks = new ArrayList<>();
         blocks.add(SlackTextUtils.buildHeaderLayoutBlock("Dostupné povely"));
-        blocks.add(SlackTextUtils.buildTextLayoutBlock("- @jidlobot menu - vypíše aktuální jídelníček\n- @jidlobot help - tato zpráva"));
+        if (isIm) {
+            blocks.add(SlackTextUtils.buildTextLayoutBlock("- `menu` - vypíše aktuální jídelníček\n- `help` - tato zpráva"));
+        } else {
+            blocks.add(SlackTextUtils.buildTextLayoutBlock("- `@jidlobot menu` - vypíše aktuální jídelníček\n- `@jidlobot help` - tato zpráva"));
+        }
         blocks.add(Blocks.divider());
         blocks.add(SlackTextUtils.buildTextLayoutBlock("Denní menu je automaticky stahováno z webových stránek Jídlovic."));
         return blocks;
     }
-    private String buildPlainHelpMessage(){
-        return "Dostupné příkazy:\n- @jidlobot menu\n- @jidlobot help";
+
+    private String buildPlainHelpMessage(boolean isIm) {
+        if (isIm)
+            return "Dostupné příkazy:\n- `menu`\n- `help`";
+        else
+            return "Dostupné příkazy:\n- `@jidlobot menu`\n- `@jidlobot help`";
     }
 
-    public ChatPostMessageRequest getChatPostGenericMessage() {
-        return ChatPostMessageRequest.builder()
-                .blocks(buildFormattedGenericMessage())
-                .text("Zadej '@jidlobot help' pro dostupné příkazy.")
-                .build();
+    public ChatPostMessageRequest getChatPostGenericMessage(boolean isIm) {
+        if (isIm)
+            return ChatPostMessageRequest.builder()
+                    .blocks(buildFormattedGenericMessage(isIm))
+                    .text("Zadej `help` pro dostupné příkazy.")
+                    .build();
+        else
+            return ChatPostMessageRequest.builder()
+                    .blocks(buildFormattedGenericMessage(isIm))
+                    .text("Zadej `@jidlobot help` pro dostupné příkazy.")
+                    .build();
     }
 
-    private List<LayoutBlock> buildFormattedGenericMessage() {
+    private List<LayoutBlock> buildFormattedGenericMessage(boolean isIm) {
         List<LayoutBlock> blocks = new ArrayList<>();
-        blocks.add(SlackTextUtils.buildTextLayoutBlock("Zadej '@jidlobot help' pro dostupné příkazy."));
+        if (isIm)
+            blocks.add(SlackTextUtils.buildTextLayoutBlock("Zadej `help` pro dostupné příkazy."));
+        else
+            blocks.add(SlackTextUtils.buildTextLayoutBlock("Zadej `@jidlobot help` pro dostupné příkazy."));
+
 
         return blocks;
     }

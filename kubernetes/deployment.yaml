@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: jidlobot
-          image: ghcr.io/kratochj/jidlobot:v1.1.0
+          image: ghcr.io/kratochj/jidlobot:v1.1.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

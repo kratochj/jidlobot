@@ -38,7 +38,7 @@ public class DailyMenuMessageBuilder {
             return;
         }
         menuText.append("- *").append(heading).append("*:\n");
-        for (DailyMenu.MenuItem dish :menuItems) {
+        for (DailyMenu.MenuItem dish : menuItems) {
             menuText.append(String.format("- %s (%s) - %s\n", dish.getName(), dish.getAllergens(), formatPrice(dish.getPrice())));
         }
     }
@@ -74,7 +74,11 @@ public class DailyMenuMessageBuilder {
         blocks.add(SlackTextUtils.buildTextLayoutBlock(String.format("*%s*", heading)));
 
         for (DailyMenu.MenuItem menuItem : menuItems) {
-            String menuItemText = String.format("• %s (%s) - %s", menuItem.getName(), menuItem.getAllergens(), formatPrice(menuItem.getPrice()));
+            String menuItemText;
+            if (menuItem.getPrice() == 0)
+                menuItemText = String.format("• %s (%s)", menuItem.getName(), menuItem.getAllergens());
+            else
+                menuItemText = String.format("• %s (%s) - %s", menuItem.getName(), menuItem.getAllergens(), formatPrice(menuItem.getPrice()));
             blocks.add(SlackTextUtils.buildTextLayoutBlock(menuItemText));
         }
         return blocks;

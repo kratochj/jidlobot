@@ -1,6 +1,5 @@
 package eu.kratochvil.jidlobot;
 
-import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.App;
 import com.slack.api.bolt.AppConfig;
 import com.slack.api.bolt.context.builtin.EventContext;
@@ -10,8 +9,6 @@ import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.event.AppMentionEvent;
-import com.slack.api.model.event.ImCreatedEvent;
-import com.slack.api.model.event.MessageBotEvent;
 import com.slack.api.model.event.MessageEvent;
 import eu.kratochvil.jidlobot.config.ApplicationConfig;
 import eu.kratochvil.jidlobot.config.SlackConfig;
@@ -97,7 +94,7 @@ public class SlackBotService {
     }
 
     private DailyMenu getMenu() {
-        if(!applicationConfig.isCacheEnabled() || dailyMenu == null || dailyMenuLastUpdated == null
+        if (!applicationConfig.isCacheEnabled() || dailyMenu == null || dailyMenuLastUpdated == null
                 || dailyMenuLastUpdated.isBefore(Instant.now().minusSeconds(applicationConfig.getCacheForSeconds()))) {
             dailyMenu = dailyMenuParser.parse(applicationConfig.getUrl());
             dailyMenuLastUpdated = Instant.now();

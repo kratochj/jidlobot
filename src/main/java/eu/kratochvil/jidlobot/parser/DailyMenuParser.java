@@ -2,6 +2,7 @@ package eu.kratochvil.jidlobot.parser;
 
 import eu.kratochvil.jidlobot.JsoupConnector;
 import eu.kratochvil.jidlobot.model.DailyMenu;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jsoup.nodes.Document;
@@ -105,6 +106,9 @@ public class DailyMenuParser {
                 items.add(itemCreator.create(czechText, "", allergens, price));
             }
             isCzechLine = !isCzechLine;
+        }
+        if (items.isEmpty() && StringUtils.isNotBlank(czechText)) {
+            items.add(itemCreator.create(czechText, "", "", 0.0));
         }
         return items;
     }

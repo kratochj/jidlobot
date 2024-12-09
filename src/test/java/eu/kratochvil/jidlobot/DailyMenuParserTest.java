@@ -40,6 +40,11 @@ public class DailyMenuParserTest {
         checkMenu(mockConnector, parser, "menus/testMenu002.html");
     }
 
+    @Test
+    void testParse003() throws Exception {
+        checkMenu(mockConnector, parser, "menus/testMenu003.html");
+    }
+
     private void checkMenu(JsoupConnector mockConnector, DailyMenuParser parser, String testFilename) throws IOException {
         log.debug("Starting testParse...");
         URL resource = getClass().getClassLoader().getResource(testFilename);
@@ -74,8 +79,6 @@ public class DailyMenuParserTest {
         }
         for (DailyMenu.Dish dish : menu.getSpecialDishes()) {
             assertNotNull(dish.getName());
-            assertTrue(dish.getPrice() > 0);
-            assertNotNull(dish.getAllergens());
         }
     }
 

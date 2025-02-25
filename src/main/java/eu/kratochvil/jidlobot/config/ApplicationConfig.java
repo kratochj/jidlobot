@@ -14,18 +14,22 @@ public class ApplicationConfig {
     private final String url;
     private final boolean cacheEnabled;
     private final long cacheForSeconds;
+    private final String timeZone;
 
     public ApplicationConfig(@Value("${menu.url}") String url,
                              @Value("${menu.cache-enabled:true}") boolean cacheEnabled,
-                             @Value("${menu.cache-for-seconds:600}") long cacheForSeconds) {
+                             @Value("${menu.cache-for-seconds:600}") long cacheForSeconds,
+                             @Value("${application.time-zone:Europe/Prague}") String timeZone) {
         this.url = url;
         this.cacheEnabled = cacheEnabled;
         this.cacheForSeconds = cacheForSeconds;
+        this.timeZone = timeZone;
 
         log.info("App configuration loaded");
         log.info("  URL: '{}'", url);
         log.info("  Cache enabled: '{}'", cacheEnabled);
         log.info("  Cache for seconds: '{}'", cacheForSeconds);
+        log.info("  Time zone: '{}'", timeZone);
     }
 
     @NotNull
@@ -39,5 +43,9 @@ public class ApplicationConfig {
 
     public long getCacheForSeconds() {
         return cacheForSeconds;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
     }
 }

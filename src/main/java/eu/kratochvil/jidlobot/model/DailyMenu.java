@@ -45,10 +45,10 @@ public class DailyMenu {
     public static class Soup implements MenuItem {
         private final String name;
         private final String description;
-        private final String allergens;
+        private final Long allergens;
         private final double price;
 
-        public Soup(String name, String description, String allergens, double price) {
+        public Soup(String name, String description, Long allergens, double price) {
             this.name = name;
             this.description = description;
             this.allergens = allergens;
@@ -66,7 +66,7 @@ public class DailyMenu {
         }
 
         @Override
-        public String getAllergens() {
+        public Long getAllergens() {
             return allergens;
         }
 
@@ -89,10 +89,10 @@ public class DailyMenu {
     public static class Dish implements MenuItem {
         private final String name;
         private final String description;
-        private final String allergens;
+        private final Long allergens;
         private final double price;
 
-        public Dish(String name, String description, String allergens, double price) {
+        public Dish(String name, String description, Long allergens, double price) {
             this.name = name;
             this.description = description;
             this.allergens = allergens;
@@ -105,7 +105,7 @@ public class DailyMenu {
         }
 
         @Override
-        public String getAllergens() {
+        public Long getAllergens() {
             return allergens;
         }
 
@@ -133,7 +133,7 @@ public class DailyMenu {
     public interface MenuItem {
         String getName();
 
-        String getAllergens();
+        Long getAllergens();
 
         String getDescription();
 

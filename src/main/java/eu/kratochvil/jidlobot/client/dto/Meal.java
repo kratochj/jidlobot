@@ -15,7 +15,7 @@ public class Meal {
     private String description_en;
     private double price;
     private Integer quantity;
-    private int allergens;
+    private long allergens;
     private boolean draft;
     private boolean permanent;
     private int id;
@@ -73,11 +73,11 @@ public class Meal {
         this.quantity = quantity;
     }
 
-    public int getAllergens() {
+    public long getAllergens() {
         return allergens;
     }
 
-    public void setAllergens(int allergens) {
+    public void setAllergens(long allergens) {
         this.allergens = allergens;
     }
 

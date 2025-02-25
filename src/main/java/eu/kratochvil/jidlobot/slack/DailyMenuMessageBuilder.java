@@ -5,6 +5,7 @@ import com.slack.api.model.block.Blocks;
 import com.slack.api.model.block.LayoutBlock;
 import eu.kratochvil.jidlobot.config.ApplicationConfig;
 import eu.kratochvil.jidlobot.model.DailyMenu;
+import eu.kratochvil.jidlobot.parser.AlergensParser;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +26,12 @@ public class DailyMenuMessageBuilder {
 
     private final Clock clock;
     private final ApplicationConfig config;
+    private final AlergensParser alergensParser;
 
-    public DailyMenuMessageBuilder(Clock clock, ApplicationConfig config) {
+    public DailyMenuMessageBuilder(Clock clock, ApplicationConfig config, AlergensParser alergensParser) {
         this.clock = clock;
         this.config = config;
+        this.alergensParser = alergensParser;
     }
 
     public ChatPostMessageRequest getChatPostMessage(DailyMenu dailyMenu) {
@@ -54,7 +57,7 @@ public class DailyMenuMessageBuilder {
         }
         menuText.append("- *").append(heading).append("*:\n");
         for (DailyMenu.MenuItem dish : menuItems) {
-            menuText.append(String.format("- %s  %s - %s\n", dish.getName(), dish.getDescription(), formatPrice(dish.getPrice())));
+            menuText.append(String.format("- %s  %s %s - %s\n", dish.getName(), dish.getDescription(), alergensParser.parse(dish.getAllergens()),formatPrice(dish.getPrice())));
         }
     }
 
@@ -95,7 +98,7 @@ public class DailyMenuMessageBuilder {
 
         for (DailyMenu.MenuItem menuItem : menuItems) {
             String menuItemText;
-            menuItemText = String.format("• %s %s - %s", menuItem.getName(), menuItem.getDescription(), formatPrice(menuItem.getPrice()));
+            menuItemText = String.format("• %s %s %s - %s", menuItem.getName(), menuItem.getDescription(), alergensParser.parse(menuItem.getAllergens()), formatPrice(menuItem.getPrice()));
             blocks.add(SlackTextUtils.buildTextLayoutBlock(menuItemText));
         }
         return blocks;

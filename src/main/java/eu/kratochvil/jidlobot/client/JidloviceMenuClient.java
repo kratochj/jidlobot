@@ -75,7 +75,7 @@ public class JidloviceMenuClient {
                 soups.add(new DailyMenu.Soup(
                         meal.getName(),
                         meal.getDescription(),
-                        null,
+                        meal.getAllergens(),
                         meal.getPrice()
                 ));
                 break;
@@ -83,7 +83,7 @@ public class JidloviceMenuClient {
                 dishesOfTheDay.add(new DailyMenu.Dish(
                         meal.getName(),
                         meal.getDescription(),
-                        null,
+                        meal.getAllergens(),
                         meal.getPrice()
                 ));
                 break;
@@ -91,7 +91,7 @@ public class JidloviceMenuClient {
                 specialDishes.add(new DailyMenu.Dish(
                         meal.getName(),
                         meal.getDescription(),
-                        null,
+                        meal.getAllergens(),
                         meal.getPrice()
                 ));
                 break;

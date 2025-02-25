@@ -27,14 +27,12 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Service
 public class SlackBotService {
     public final static Logger log = LoggerFactory.getLogger(SlackBotService.class);
 
     private final DailyMenuMessageBuilder dailyMenuMessageBuilder;
-    private final DailyMenuParser dailyMenuParser;
     private final BotMessageBuilder botMessageBuilder;
     private final ApplicationConfig applicationConfig;
     private final JidloviceMenuClient jidloviceMenuClient;
@@ -48,14 +46,12 @@ public class SlackBotService {
 
     public SlackBotService(SlackConfig slackConfig,
                            DailyMenuMessageBuilder dailyMenuMessageBuilder,
-                           DailyMenuParser dailyMenuParser,
                            BotMessageBuilder botMessageBuilder,
                            ApplicationConfig applicationConfig,
                            JidloviceMenuClient jidloviceMenuClient,
                            Clock clock) {
         this.slackConfig = slackConfig;
         this.dailyMenuMessageBuilder = dailyMenuMessageBuilder;
-        this.dailyMenuParser = dailyMenuParser;
         this.botMessageBuilder = botMessageBuilder;
         this.applicationConfig = applicationConfig;
         this.jidloviceMenuClient = jidloviceMenuClient;

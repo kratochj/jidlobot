@@ -60,9 +60,9 @@ public class JidloviceMenuClientTest {
         DailyMenu dailyMenu = jidloviceMenuClient.getDailyMenu(date);
 
         assertEquals(1, dailyMenu.getSoups().size());
-        assertEquals("Soup1", dailyMenu.getSoups().get(0).getName());
-        assertEquals("Delicious soup", dailyMenu.getSoups().get(0).getDescription());
-        assertEquals(55.0, dailyMenu.getSoups().get(0).getPrice());
+        assertEquals("Soup1", dailyMenu.getSoups().getFirst().getName());
+        assertEquals("Delicious soup", dailyMenu.getSoups().getFirst().getDescription());
+        assertEquals(55.0, dailyMenu.getSoups().getFirst().getPrice());
     }
 
     @Test
@@ -158,10 +158,10 @@ public class JidloviceMenuClientTest {
         DailyMenu dailyMenu = jidloviceMenuClient.getDailyMenu(date);
 
         assertEquals(1, dailyMenu.getSoups().size());
-        assertEquals("Soup1", dailyMenu.getSoups().get(0).getName());
+        assertEquals("Soup1", dailyMenu.getSoups().getFirst().getName());
         assertEquals(1, dailyMenu.getDishesOfTheDay().size());
-        assertEquals("Dish1", dailyMenu.getDishesOfTheDay().get(0).getName());
+        assertEquals("Dish1", dailyMenu.getDishesOfTheDay().getFirst().getName());
         assertEquals(1, dailyMenu.getSpecialDishes().size());
-        assertEquals("Special1", dailyMenu.getSpecialDishes().get(0).getName());
+        assertEquals("Special1", dailyMenu.getSpecialDishes().getFirst().getName());
     }
 }

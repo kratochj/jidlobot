@@ -14,7 +14,6 @@ import eu.kratochvil.jidlobot.client.JidloviceMenuClient;
 import eu.kratochvil.jidlobot.config.ApplicationConfig;
 import eu.kratochvil.jidlobot.config.SlackConfig;
 import eu.kratochvil.jidlobot.model.DailyMenu;
-import eu.kratochvil.jidlobot.parser.DailyMenuParser;
 import eu.kratochvil.jidlobot.slack.BotMessageBuilder;
 import eu.kratochvil.jidlobot.slack.DailyMenuMessageBuilder;
 import jakarta.annotation.PostConstruct;

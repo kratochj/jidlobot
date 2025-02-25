@@ -55,14 +55,22 @@ public class DailyMenu {
             this.price = price;
         }
 
+        @Override
         public String getName() {
             return name;
         }
 
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
         public String getAllergens() {
             return allergens;
         }
 
+        @Override
         public double getPrice() {
             return price;
         }
@@ -79,31 +87,34 @@ public class DailyMenu {
     }
 
     public static class Dish implements MenuItem {
-        private final String nameCz;
-        private final String nameEn;
+        private final String name;
+        private final String description;
         private final String allergens;
         private final double price;
 
-        public Dish(String nameCz, String nameEn, String allergens, double price) {
-            this.nameCz = nameCz;
-            this.nameEn = nameEn;
+        public Dish(String name, String description, String allergens, double price) {
+            this.name = name;
+            this.description = description;
             this.allergens = allergens;
             this.price = price;
         }
 
-        public String getNameCz() {
-            return nameCz;
+        @Override
+        public String getName() {
+            return name;
         }
 
         @Override
-        public String getName() {
-            return getNameCz();
-        }
-
         public String getAllergens() {
             return allergens;
         }
 
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
         public double getPrice() {
             return price;
         }
@@ -111,8 +122,8 @@ public class DailyMenu {
         @Override
         public String toString() {
             return new ToStringBuilder(this)
-                    .append("nameCz", nameCz)
-                    .append("nameEn", nameEn)
+                    .append("nameCz", name)
+                    .append("description", description)
                     .append("allergens", allergens)
                     .append("price", price)
                     .toString();
@@ -121,7 +132,11 @@ public class DailyMenu {
 
     public interface MenuItem {
         String getName();
+
         String getAllergens();
+
+        String getDescription();
+
         double getPrice();
     }
 }

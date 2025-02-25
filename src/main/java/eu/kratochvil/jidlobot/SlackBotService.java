@@ -10,10 +10,10 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.event.AppMentionEvent;
 import com.slack.api.model.event.MessageEvent;
+import eu.kratochvil.jidlobot.client.JidloviceMenuClient;
 import eu.kratochvil.jidlobot.config.ApplicationConfig;
 import eu.kratochvil.jidlobot.config.SlackConfig;
 import eu.kratochvil.jidlobot.model.DailyMenu;
-import eu.kratochvil.jidlobot.parser.DailyMenuParser;
 import eu.kratochvil.jidlobot.slack.BotMessageBuilder;
 import eu.kratochvil.jidlobot.slack.DailyMenuMessageBuilder;
 import jakarta.annotation.PostConstruct;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.time.Instant;
 
 @Service
@@ -31,9 +32,10 @@ public class SlackBotService {
     public final static Logger log = LoggerFactory.getLogger(SlackBotService.class);
 
     private final DailyMenuMessageBuilder dailyMenuMessageBuilder;
-    private final DailyMenuParser dailyMenuParser;
     private final BotMessageBuilder botMessageBuilder;
     private final ApplicationConfig applicationConfig;
+    private final JidloviceMenuClient jidloviceMenuClient;
+    private final Clock clock;
 
     private DailyMenu dailyMenu = null;
     private Instant dailyMenuLastUpdated = null;
@@ -43,14 +45,16 @@ public class SlackBotService {
 
     public SlackBotService(SlackConfig slackConfig,
                            DailyMenuMessageBuilder dailyMenuMessageBuilder,
-                           DailyMenuParser dailyMenuParser,
                            BotMessageBuilder botMessageBuilder,
-                           ApplicationConfig applicationConfig) {
+                           ApplicationConfig applicationConfig,
+                           JidloviceMenuClient jidloviceMenuClient,
+                           Clock clock) {
         this.slackConfig = slackConfig;
         this.dailyMenuMessageBuilder = dailyMenuMessageBuilder;
-        this.dailyMenuParser = dailyMenuParser;
         this.botMessageBuilder = botMessageBuilder;
         this.applicationConfig = applicationConfig;
+        this.jidloviceMenuClient = jidloviceMenuClient;
+        this.clock = clock;
     }
 
     @PostConstruct
@@ -96,9 +100,12 @@ public class SlackBotService {
     private DailyMenu getMenu() {
         if (!applicationConfig.isCacheEnabled() || dailyMenu == null || dailyMenuLastUpdated == null
                 || dailyMenuLastUpdated.isBefore(Instant.now().minusSeconds(applicationConfig.getCacheForSeconds()))) {
-            dailyMenu = dailyMenuParser.parse(applicationConfig.getUrl());
-            dailyMenuLastUpdated = Instant.now();
+            //dailyMenu = dailyMenuParser.parse(applicationConfig.getUrl());
+            log.debug("Refreshing menu from the website");
+            dailyMenu = jidloviceMenuClient.getDailyMenu(clock.instant());
+            dailyMenuLastUpdated = clock.instant();
         }
+        log.debug("Sending menu to slack");
         return dailyMenu;
     }
 

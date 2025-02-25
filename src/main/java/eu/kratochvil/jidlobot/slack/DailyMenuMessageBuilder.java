@@ -3,10 +3,17 @@ package eu.kratochvil.jidlobot.slack;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.model.block.Blocks;
 import com.slack.api.model.block.LayoutBlock;
+import eu.kratochvil.jidlobot.config.ApplicationConfig;
 import eu.kratochvil.jidlobot.model.DailyMenu;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -15,6 +22,14 @@ import java.util.Locale;
 public class DailyMenuMessageBuilder {
 
     private final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.of("cs", "CZ"));
+
+    private final Clock clock;
+    private final ApplicationConfig config;
+
+    public DailyMenuMessageBuilder(Clock clock, ApplicationConfig config) {
+        this.clock = clock;
+        this.config = config;
+    }
 
     public ChatPostMessageRequest getChatPostMessage(DailyMenu dailyMenu) {
         return ChatPostMessageRequest.builder()
@@ -39,7 +54,7 @@ public class DailyMenuMessageBuilder {
         }
         menuText.append("- *").append(heading).append("*:\n");
         for (DailyMenu.MenuItem dish : menuItems) {
-            menuText.append(String.format("- %s (%s) - %s\n", dish.getName(), dish.getAllergens(), formatPrice(dish.getPrice())));
+            menuText.append(String.format("- %s  %s - %s\n", dish.getName(), dish.getDescription(), formatPrice(dish.getPrice())));
         }
     }
 
@@ -47,8 +62,7 @@ public class DailyMenuMessageBuilder {
         List<LayoutBlock> blocks = new ArrayList<>();
 
         // Header
-        blocks.add(SlackTextUtils.buildHeaderLayoutBlock("Denní Menu v Jídlovicích"));
-
+        blocks.add(SlackTextUtils.buildHeaderLayoutBlock(String.format("Menu v Jídlovicích dne %s", formatLocalDateToString(clock.instant()))));
 
         // Soups Section
         if (!dailyMenu.getSoups().isEmpty()) {
@@ -61,11 +75,17 @@ public class DailyMenuMessageBuilder {
         }
 
         // Specials Section
-        if (!dailyMenu.getDishesOfTheDay().isEmpty()) {
+        if (!dailyMenu.getSpecialDishes().isEmpty()) {
             blocks.addAll(addMenuItemsSection("Jídlovický speciál:", dailyMenu.getSpecialDishes()));
         }
 
         return blocks;
+    }
+
+    @NotNull
+    private String formatLocalDateToString(Instant instant) {
+        LocalDate localDate = LocalDate.ofInstant(instant, ZoneId.of(config.getTimeZone()));
+        return localDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     private <T extends DailyMenu.MenuItem> List<LayoutBlock> addMenuItemsSection(String heading, List<T> menuItems) {
@@ -75,10 +95,7 @@ public class DailyMenuMessageBuilder {
 
         for (DailyMenu.MenuItem menuItem : menuItems) {
             String menuItemText;
-            if (menuItem.getPrice() == 0)
-                menuItemText = String.format("• %s (%s)", menuItem.getName(), menuItem.getAllergens());
-            else
-                menuItemText = String.format("• %s (%s) - %s", menuItem.getName(), menuItem.getAllergens(), formatPrice(menuItem.getPrice()));
+            menuItemText = String.format("• %s %s - %s", menuItem.getName(), menuItem.getDescription(), formatPrice(menuItem.getPrice()));
             blocks.add(SlackTextUtils.buildTextLayoutBlock(menuItemText));
         }
         return blocks;

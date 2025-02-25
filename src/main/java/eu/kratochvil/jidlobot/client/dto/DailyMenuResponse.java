@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * DTO mapping the JSON structure of the daily menu endpoint:
- *
+ * <br/>
  * {
  *   "available": false,
  *   "branch_id": 3,

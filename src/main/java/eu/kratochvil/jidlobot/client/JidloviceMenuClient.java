@@ -21,9 +21,6 @@ import java.util.List;
 public class JidloviceMenuClient {
     private static final Logger log = LoggerFactory.getLogger(JidloviceMenuClient.class);
 
-    private static final String DAILY_MENU_URL =
-            "https://www.jidlovice.cz/api/v1/branch/3/menu/{date}?include_internal_tags=false";
-
     private final RestTemplate restTemplate;
     private final ApplicationConfig config;
 

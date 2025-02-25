@@ -7,11 +7,13 @@ import java.time.Clock;
 import java.time.ZoneId;
 
 /**
+ * <p>
  * Configuration class for providing a {@link Clock} bean.
- *
+ * </p><p>
  * This class defines a {@code Clock} bean configured with the time zone
  * "Europe/Prague". It can be used throughout the application for working
  * with time operations in a consistent and testable manner.
+ * </p>
  */
 @Configuration
 public class ClockConfig {

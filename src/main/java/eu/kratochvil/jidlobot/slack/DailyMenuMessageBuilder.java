@@ -6,6 +6,7 @@ import com.slack.api.model.block.LayoutBlock;
 import eu.kratochvil.jidlobot.config.ApplicationConfig;
 import eu.kratochvil.jidlobot.model.DailyMenu;
 import eu.kratochvil.jidlobot.parser.AlergensParser;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +58,11 @@ public class DailyMenuMessageBuilder {
         }
         menuText.append("- *").append(heading).append("*:\n");
         for (DailyMenu.MenuItem dish : menuItems) {
-            menuText.append(String.format("- %s  %s %s - %s\n", dish.getName(), dish.getDescription(), alergensParser.parse(dish.getAllergens()),formatPrice(dish.getPrice())));
+            menuText.append(String.format("- %s  %s %s - %s\n",
+                    StringUtils.defaultIfBlank(dish.getName(), ""),
+                    StringUtils.defaultIfBlank(dish.getDescription(), ""),
+                    alergensParser.parse(dish.getAllergens()),
+                    formatPrice(dish.getPrice())));
         }
     }
 
@@ -98,7 +103,11 @@ public class DailyMenuMessageBuilder {
 
         for (DailyMenu.MenuItem menuItem : menuItems) {
             String menuItemText;
-            menuItemText = String.format("• %s %s %s - %s", menuItem.getName(), menuItem.getDescription(), alergensParser.parse(menuItem.getAllergens()), formatPrice(menuItem.getPrice()));
+            menuItemText = String.format("• %s %s %s - %s",
+                    StringUtils.defaultIfBlank(menuItem.getName(), ""),
+                    StringUtils.defaultIfBlank(menuItem.getDescription(), ""),
+                    alergensParser.parse(menuItem.getAllergens()),
+                    formatPrice(menuItem.getPrice()));
             blocks.add(SlackTextUtils.buildTextLayoutBlock(menuItemText));
         }
         return blocks;

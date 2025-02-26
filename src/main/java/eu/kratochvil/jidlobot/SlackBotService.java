@@ -62,6 +62,7 @@ public class SlackBotService {
         String botToken = slackConfig.getBotToken();
         AppConfig appConfig = AppConfig.builder().singleTeamBotToken(botToken).build();
         App app = new App(appConfig);
+        app.config().setSigningSecret(null);
 
         app.event(MessageEvent.class, (req, ctx)
                 -> processSlackEvent(true, req.getEvent().getText(), ctx));
@@ -70,7 +71,7 @@ public class SlackBotService {
                 -> processSlackEvent(false, req.getEvent().getText(), ctx));
 
         socketModeApp = new SocketModeApp(slackConfig.getAppToken(), app);
-        socketModeApp.start();
+        socketModeApp.startAsync();
     }
 
     private Response processSlackEvent(boolean isIm, String req, EventContext ctx) {

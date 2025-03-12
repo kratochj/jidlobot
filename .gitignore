@@ -35,3 +35,4 @@ build/
 # project specific files
 /src/main/resources/application-local.yml
 /kubernetes/secrets.yaml
+/kubernetes/cert-secret.yaml

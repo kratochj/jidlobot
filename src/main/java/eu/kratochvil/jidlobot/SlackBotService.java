@@ -33,12 +33,7 @@ public class SlackBotService {
 
     private final DailyMenuMessageBuilder dailyMenuMessageBuilder;
     private final BotMessageBuilder botMessageBuilder;
-    private final ApplicationConfig applicationConfig;
-    private final JidloviceMenuClient jidloviceMenuClient;
-    private final Clock clock;
-
-    private DailyMenu dailyMenu = null;
-    private Instant dailyMenuLastUpdated = null;
+    private final DailyMenuCache dailyMenuCache;
     private SocketModeApp socketModeApp = null;
 
     private final SlackConfig slackConfig;
@@ -46,15 +41,11 @@ public class SlackBotService {
     public SlackBotService(SlackConfig slackConfig,
                            DailyMenuMessageBuilder dailyMenuMessageBuilder,
                            BotMessageBuilder botMessageBuilder,
-                           ApplicationConfig applicationConfig,
-                           JidloviceMenuClient jidloviceMenuClient,
-                           Clock clock) {
+                           DailyMenuCache dailyMenuCache) {
         this.slackConfig = slackConfig;
         this.dailyMenuMessageBuilder = dailyMenuMessageBuilder;
         this.botMessageBuilder = botMessageBuilder;
-        this.applicationConfig = applicationConfig;
-        this.jidloviceMenuClient = jidloviceMenuClient;
-        this.clock = clock;
+        this.dailyMenuCache = dailyMenuCache;
     }
 
     @PostConstruct
@@ -98,24 +89,12 @@ public class SlackBotService {
         return ctx.ack();
     }
 
-    private DailyMenu getMenu() {
-        if (!applicationConfig.isCacheEnabled() || dailyMenu == null || dailyMenuLastUpdated == null
-                || dailyMenuLastUpdated.isBefore(Instant.now().minusSeconds(applicationConfig.getCacheForSeconds()))) {
-            //dailyMenu = dailyMenuParser.parse(applicationConfig.getUrl());
-            log.debug("Refreshing menu from the website");
-            dailyMenu = jidloviceMenuClient.getDailyMenu(clock.instant());
-            dailyMenuLastUpdated = clock.instant();
-        }
-        log.debug("Sending menu to slack");
-        return dailyMenu;
-    }
-
     private @NotNull ChatPostMessageRequest processCommand(boolean isIm, String text) {
         // Remove the bot mention from the text
         String commandText = text.replaceAll("<@\\w+>", "").trim().toLowerCase();
 
         return switch (commandText) {
-            case "menu" -> dailyMenuMessageBuilder.getChatPostMessage(getMenu());
+            case "menu" -> dailyMenuMessageBuilder.getChatPostMessage(dailyMenuCache.getMenu());
             case "help" -> botMessageBuilder.getChatPostHelpMessage(isIm);
             default -> botMessageBuilder.getChatPostGenericMessage(isIm);
         };

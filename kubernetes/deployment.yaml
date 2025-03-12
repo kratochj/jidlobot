@@ -19,6 +19,7 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+              name: http-alt
           env:
             - name: SLACK_BOT_TOKEN
               valueFrom:
@@ -43,6 +44,7 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
+      name: http-alt
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -61,3 +63,20 @@ spec:
                   number: 8080
             path: /
             pathType: Prefix
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: jidlobot-podscrape
+  namespace: fun
+spec:
+  selector:
+    matchLabels:
+      app: jidlobot
+  namespaceSelector:
+    matchNames:
+      - fun
+  podMetricsEndpoints:
+    - port: http-alt
+      path: /actuator/prometheus
+      interval: 15s

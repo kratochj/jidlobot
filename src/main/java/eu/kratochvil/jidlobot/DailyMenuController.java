@@ -6,14 +6,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class DailyMenuController {
+
+    private final DailyMenuCache dailyMenuCache;
+
+    public DailyMenuController(DailyMenuCache dailyMenuCache) {
+        this.dailyMenuCache = dailyMenuCache;
+    }
 
     @GetMapping("/dailymenu")
     public DailyMenu getDailyMenu() {
-        // Here you can build and return your DailyMenu object.
-        DailyMenu dailyMenu = new DailyMenu();
-        dailyMenu.setMenu("Today's Special: Grilled Chicken with Vegetables");
-        return dailyMenu;
+        return dailyMenuCache.getMenu();
     }
 }

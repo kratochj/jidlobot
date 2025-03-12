@@ -2,6 +2,7 @@ package eu.kratochvil.jidlobot;
 
 import eu.kratochvil.jidlobot.client.JidloviceMenuClient;
 import eu.kratochvil.jidlobot.config.ApplicationConfig;
+import eu.kratochvil.jidlobot.metrics.JidlobotMetrics;
 import eu.kratochvil.jidlobot.model.DailyMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +27,16 @@ public class DailyMenuCache {
     private final JidloviceMenuClient jidloviceMenuClient;
     private final ApplicationConfig applicationConfig;
     private final Clock clock;
+    private final JidlobotMetrics jidlobotMetrics;
 
     private DailyMenu dailyMenu = null;
     private Instant dailyMenuLastUpdated = null;
 
-    public DailyMenuCache(JidloviceMenuClient jidloviceMenuClient, ApplicationConfig applicationConfig, Clock clock) {
+    public DailyMenuCache(JidloviceMenuClient jidloviceMenuClient, ApplicationConfig applicationConfig, Clock clock, JidlobotMetrics jidlobotMetrics) {
         this.jidloviceMenuClient = jidloviceMenuClient;
         this.applicationConfig = applicationConfig;
         this.clock = clock;
+        this.jidlobotMetrics = jidlobotMetrics;
     }
 
     /**
@@ -49,6 +52,7 @@ public class DailyMenuCache {
             //dailyMenu = dailyMenuParser.parse(applicationConfig.getUrl());
             log.debug("Refreshing menu from the website");
             dailyMenu = jidloviceMenuClient.getDailyMenu(clock.instant());
+            jidlobotMetrics.recordMenuDownloaded();
             dailyMenuLastUpdated = clock.instant();
         }
         log.debug("Sending menu to slack");

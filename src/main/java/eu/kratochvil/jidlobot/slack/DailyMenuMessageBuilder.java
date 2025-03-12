@@ -4,6 +4,7 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.model.block.Blocks;
 import com.slack.api.model.block.LayoutBlock;
 import eu.kratochvil.jidlobot.config.ApplicationConfig;
+import eu.kratochvil.jidlobot.metrics.JidlobotMetrics;
 import eu.kratochvil.jidlobot.model.DailyMenu;
 import eu.kratochvil.jidlobot.parser.AlergensParser;
 import org.apache.commons.lang3.StringUtils;
@@ -28,14 +29,17 @@ public class DailyMenuMessageBuilder {
     private final Clock clock;
     private final ApplicationConfig config;
     private final AlergensParser alergensParser;
+    private final JidlobotMetrics jidlobotMetrics;
 
-    public DailyMenuMessageBuilder(Clock clock, ApplicationConfig config, AlergensParser alergensParser) {
+    public DailyMenuMessageBuilder(Clock clock, ApplicationConfig config, AlergensParser alergensParser, JidlobotMetrics jidlobotMetrics) {
         this.clock = clock;
         this.config = config;
         this.alergensParser = alergensParser;
+        this.jidlobotMetrics = jidlobotMetrics;
     }
 
     public ChatPostMessageRequest getChatPostMessage(DailyMenu dailyMenu) {
+        jidlobotMetrics.recordMenuDisplayed();
         return ChatPostMessageRequest.builder()
                 .blocks(buildFormattedMessage(dailyMenu))
                 .text(buildPlainMessage(dailyMenu))

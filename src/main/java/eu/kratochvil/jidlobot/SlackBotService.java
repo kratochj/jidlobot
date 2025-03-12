@@ -10,10 +10,7 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.event.AppMentionEvent;
 import com.slack.api.model.event.MessageEvent;
-import eu.kratochvil.jidlobot.client.JidloviceMenuClient;
-import eu.kratochvil.jidlobot.config.ApplicationConfig;
 import eu.kratochvil.jidlobot.config.SlackConfig;
-import eu.kratochvil.jidlobot.model.DailyMenu;
 import eu.kratochvil.jidlobot.slack.BotMessageBuilder;
 import eu.kratochvil.jidlobot.slack.DailyMenuMessageBuilder;
 import jakarta.annotation.PostConstruct;
@@ -24,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.Clock;
-import java.time.Instant;
 
 @Service
 public class SlackBotService {

@@ -10,10 +10,17 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"  # Expose all endpoints (restrict in production)
+        include: "*"
   endpoint:
     health:
-      show-details: "always"  # Show detailed health information
+      show-details: "always"
+      access: unrestricted
+    prometheus:
+      access: unrestricted
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 server:
   shutdown: graceful

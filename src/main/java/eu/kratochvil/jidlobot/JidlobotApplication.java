@@ -1,8 +1,11 @@
 package eu.kratochvil.jidlobot;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class JidlobotApplication {
@@ -10,8 +13,8 @@ public class JidlobotApplication {
         SpringApplication.run(JidlobotApplication.class, args);
     }
 
-    @PostConstruct
-    public void init() {
-
+    @Bean
+    MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
+        return registry -> registry.config().commonTags("application", "jidlobot");
     }
 }
